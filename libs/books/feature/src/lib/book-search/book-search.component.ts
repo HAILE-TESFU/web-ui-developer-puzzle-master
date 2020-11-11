@@ -5,26 +5,29 @@ import {
   clearSearch,
   getAllBooks,
   ReadingListBook,
-  searchBooks
+  searchBooks,
+  removeFromReadingList,
 } from '@tmo/books/data-access';
 import { FormBuilder } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'tmo-book-search',
   templateUrl: './book-search.component.html',
-  styleUrls: ['./book-search.component.scss']
+  styleUrls: ['./book-search.component.scss'],
 })
 export class BookSearchComponent implements OnInit {
   books: ReadingListBook[];
 
   searchForm = this.fb.group({
-    term: ''
+    term: '',
   });
 
   constructor(
     private readonly store: Store,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private snackBar: MatSnackBar
   ) {}
 
   get searchTerm(): string {
@@ -32,7 +35,7 @@ export class BookSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.select(getAllBooks).subscribe(books => {
+    this.store.select(getAllBooks).subscribe((books) => {
       this.books = books;
     });
   }
@@ -44,6 +47,7 @@ export class BookSearchComponent implements OnInit {
   }
 
   addBookToReadingList(book: Book) {
+    console.log(book, 'add');
     this.store.dispatch(addToReadingList({ book }));
   }
 
@@ -53,10 +57,25 @@ export class BookSearchComponent implements OnInit {
   }
 
   searchBooks() {
-    if (this.searchForm.value.term) {
-      this.store.dispatch(searchBooks({ term: this.searchTerm }));
-    } else {
-      this.store.dispatch(clearSearch());
-    }
+    setTimeout(()=>{
+      if (this.searchForm.value.term) {
+        this.store.dispatch(searchBooks({ term: this.searchTerm }));
+      } else {
+        this.store.dispatch(clearSearch());
+      }
+    },500)
+  }
+
+  unDoAddingToList(bo: Book, action) {
+    const snackBarRef = this.snackBar.open('book added reading list', action, {
+      duration: 2000,
+    });
+
+    const item = { bookId: bo.id, ...bo };
+    //console.log(bo, 'undo');
+    snackBarRef.onAction().subscribe(() => {
+      this.store.dispatch(removeFromReadingList({ item }));
+      //console.log('item tow');
+    });
   }
 }
