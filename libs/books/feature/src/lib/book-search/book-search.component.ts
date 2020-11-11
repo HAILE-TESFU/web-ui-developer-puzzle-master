@@ -53,10 +53,12 @@ export class BookSearchComponent implements OnInit {
   }
 
   searchBooks() {
-    if (this.searchForm.value.term) {
-      this.store.dispatch(searchBooks({ term: this.searchTerm }));
-    } else {
-      this.store.dispatch(clearSearch());
-    }
+    setTimeout(()=>{
+      if (this.searchForm.value.term) {
+        this.store.dispatch(searchBooks({ term: this.searchTerm }));
+      } else {
+        this.store.dispatch(clearSearch());
+      }
+    },500)
   }
 }

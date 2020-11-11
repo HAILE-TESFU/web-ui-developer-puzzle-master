@@ -25,7 +25,10 @@
                     </div>
                     <p [innerHTML]="b.description"></p>
                     <div>
-                        <button mat-flat-button color="primary" (click)="addBookToReadingList(b)" [disabled]="b.isAdded">
+                        <button mat-flat-button color="primary" (click)="addBookToReadingList(b)" [disabled]="b.isAdded" *ngIf="b.isAdded">
+              finished
+            </button>:
+                        <button mat-flat-button color="primary" (click)="addBookToReadingList(b)" [disabled]="b.isAdded" *ngIf="!b.isAdded">
               Want to Read
             </button>
                     </div>
@@ -37,8 +40,7 @@
 <ng-template #empty>
     <div class="empty">
         <p>
-            Try searching for a topic, for example "<a (click)="searchExample()">JavaScript</a
-      >".
-    </p>
-  </div>
+            Try searching for a topic, for example "<a (click)="searchExample()">JavaScript</a>".
+        </p>
+    </div>
 </ng-template>
